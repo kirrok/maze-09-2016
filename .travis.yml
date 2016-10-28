@@ -4,11 +4,10 @@ jdk:
 deploy:
   provider: heroku
   api_key:
-    secure: R+v93GOr7gnyaQ08tfMRq3+6klavl098khQiWeQ7Q7ChNicuIKlECXRskfeb4Xh99I9Aevmrsuv1EE8wzcCrpCYoHm/HpfVtTI7+Lt/R0ku20fZJittEc6OymnySWiXtBMW6zesv7t3B500CKOeIUpE9c0sf6myI4iIJiBsDfMjFwRBWG0fE5BzBvMG8Z6GogVtZ19tAiXKRALhVKk4BMmisNMo8ItzAJQtNaUYslBM6YpD0+Dbz0fhg2LyemYS9RKKIB+ceueMw7ARFwanmq6a+CErtdreEnwmS/N6t8z+tBDvEY7OLk3cI1c+Z5krujNZnX/YEPRwnEctOdyAnZOnVQFwQ8EqTbiN1OASOVhGQJeyK9YDgsJfHiZT/1dx5xIGN5tIre3n2RiTL5JAPNunF9EwJ92ssaueP6c9ZmatfzKV3j1FzrV9L++3F+KNssxGCzfFTC3wDqqnLlIcCVLctwmh/ONPPVc0cSudNlv0Qy+PDEGsXwvVac8r1Oe8Hh80iJwuBV990Vm0cc2yLJaa8nAlgPHKozBn3v1m6UbYzD6Eptqpyn5rBMwi5bC3WubZluIyiPclqE5OZkpJfLGIGWkkSPhfflxaae290JohsHll01tfUAAzABoWDdyfETEGC6r4N4N7Rf9kN3Fix5HopznifZtgnQ/J2WWt/8Tk=
-  app: nameless-wildwood-32323
+    secure: LQtoMHcIssptMxbpHPto9zVbKG54Vq4K7s/942ll+YrtNUER+dEbgCbpCuto26vN1aG0IgJUM8fcHz6apG97DpW5koF/R+1ClGp+ymtYII754iAIRgFxPXcjoYOq4dDmIrbu8+6SIkBnbwOBatjAQJt4i8iQdRz+M25hj6JChhR0hqUb1VqLKFI+w1HkDXn5bO9eZcYGoNQEIdpRix1iw28kO2LEtqGmRh0Z4KtZ8kfC1dWjEbjk4AhZgDEzG3bq9SxhVTSH57BpoGJEY/Syf7gVKlH0ZvWhzBZpylVLIEQ+8wKK92ylgGbtRskYuSugSMlUvV5THJUua9KR8DeLq6rGzH0st5pKI2iXyLFeKko7VOttnap3+1cCadlRejZBP8AeqPJJa8xTS8yhTL3zxrW2Big0sSWQyE71AE8KmLQVAhnkKW/qieVU57MPP3b+7/+Sbk+Ce6Z99kspnaIe9Cm6/6X06NyPKJiLCnT9EQxrqjR7JxJxnQOshoNqO4QsoiluHDg5YO0gNzAESE2LT94OiYcXAyBX2Y8ZoAo373wJ3iHf3LLLaBcFqJLsrLzV3xZBlleacJD/f0d5Ii1yvZ4tsvw3Kt4hpCyYrUTUUrX6SsHhnTu64/VNJLrjlCMHWuV7yi8w40ipcBKJbNTFwXlpk18j6IdIhoiw85BqIWI=
+  app: brain404-backend
   on:
-    repo: slavyanskii/maze-09-2016
-branches:
-  only:
-    - lol
-    - master
+    repo: Brain404/maze-09-2016
+#branches:
+#  only:
+#  - master
