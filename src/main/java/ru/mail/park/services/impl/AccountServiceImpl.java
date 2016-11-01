@@ -2,6 +2,7 @@ package ru.mail.park.services.impl;
 
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +25,39 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void addUser(String login, String password, String email) {
-        userDao.addUser(login, password, email);
+    public void addUser(UserDataSet user) {
+        try {
+            userDao.addUser(user.getLogin(), user.getPassword());
+        } catch (DataAccessException e) {
+            Application.logger.warn(e);
+        }
+    }
+
+    @Override
+    public void deleteUser(long id) {
+        try {
+            userDao.deleteUser(id);
+        } catch (DataAccessException e) {
+            Application.logger.warn(e);
+        }
     }
 
     @Nullable
     @Override
-    public UserDataSet getUser(String login) {
+    public UserDataSet getUserByLogin(String login) {
         try {
             return userDao.getUserByLogin(login);
+        } catch (EmptyResultDataAccessException e) {
+            Application.logger.warn(e);
+            return null;
+        }
+    }
+
+    @Nullable
+    @Override
+    public UserDataSet getUserById(long id) {
+        try {
+            return userDao.getUserById(id);
         } catch (EmptyResultDataAccessException e) {
             Application.logger.warn(e);
             return null;
@@ -44,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
         userDao.updateUser(user);
     }
 
-    public List<Map<String, Object>> score(String limit){
+    public List<Map<String, Object>> score(String limit) {
         return userDao.getUsersScore(limit);
     }
 }

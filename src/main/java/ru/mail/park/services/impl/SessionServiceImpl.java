@@ -47,6 +47,7 @@ public class SessionServiceImpl implements SessionService {
             Application.logger.warn(e);
             return null;
         }
+        System.out.println("ID FROM getUser: " + userDAO.getUserById(userId).getId());
         return userDAO.getUserById(userId);
     }
 
@@ -59,3 +60,4 @@ public class SessionServiceImpl implements SessionService {
         }
     }
 }
+

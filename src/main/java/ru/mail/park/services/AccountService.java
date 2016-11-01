@@ -6,9 +6,14 @@ import ru.mail.park.dataSets.UserDataSet;
  * Created by kirrok on 21.10.16.
  */
 public interface AccountService {
-    void addUser(String login, String password, String email);
+    void addUser(UserDataSet user);
 
-    UserDataSet getUser(String email);
+    void deleteUser(long id);
 
     void updateUser(UserDataSet user);
+
+    UserDataSet getUserByLogin(String email);
+
+    UserDataSet getUserById(long id);
+
 }

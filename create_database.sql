@@ -11,7 +11,6 @@ SET FOREIGN_KEY_CHECKS=1;
 CREATE TABLE `user` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`login` varchar(50) NOT NULL,
-	`email` varchar(50) NOT NULL,
 	`password` varchar(50) NOT NULL,
 	`max_score` int(8) DEFAULT 0,
 	PRIMARY KEY (`id`),
@@ -20,8 +19,8 @@ CREATE TABLE `user` (
 
 CREATE TABLE `session` (
 	`id` int (11) NOT NULL AUTO_INCREMENT,
-	`session_id` varchar(250) NOT NULL,
-	`user_id` int (11) NOT NULL UNIQUE,
+	`session_id` varchar(250) NOT NULL UNIQUE,
+	`user_id` int (11) NOT NULL,
 	`creation_time` DATETIME NOT NULL,
 	`last_accessed_time` DATETIME NOT NULL,
 	PRIMARY KEY(id),

@@ -9,9 +9,9 @@ import javax.servlet.http.HttpSession;
  */
 public interface SessionService {
 
-    public void addUser(HttpSession session, UserDataSet user);
+    void addUser(HttpSession session, UserDataSet user);
 
-    public UserDataSet getUser(HttpSession session);
+    UserDataSet getUser(HttpSession session);
 
-    public void delUser(HttpSession session);
+    void delUser(HttpSession session);
 }
