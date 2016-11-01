@@ -2,6 +2,7 @@ package ru.mail.park.repositories;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Util;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.stereotype.Repository;
 import ru.mail.park.dataSets.UserDataSet;
 

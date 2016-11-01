@@ -34,8 +34,19 @@ public class UserDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void addUser(String login, String password) {
-        jdbcTemplate.update(ADD_USER, login, password);
+    public Long addUser(String login, String password) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(
+                connection -> {
+                    final PreparedStatement ps = connection.prepareStatement(ADD_USER, new String[]{"id"});
+                    ps.setString(1, login);
+                    ps.setString(2, password);
+                    return ps;
+                },
+                keyHolder);
+
+        return keyHolder.getKey().longValue();
     }
 
     public void deleteUser(long id) {

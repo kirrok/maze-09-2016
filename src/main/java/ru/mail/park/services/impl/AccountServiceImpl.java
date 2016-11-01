@@ -24,12 +24,14 @@ public class AccountServiceImpl implements AccountService {
         this.userDao = userDao;
     }
 
+    @Nullable
     @Override
-    public void addUser(UserDataSet user) {
+    public Long addUser(UserDataSet user) {
         try {
-            userDao.addUser(user.getLogin(), user.getPassword());
+            return userDao.addUser(user.getLogin(), user.getPassword());
         } catch (DataAccessException e) {
             Application.logger.warn(e);
+            return null;
         }
     }
 

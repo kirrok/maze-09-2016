@@ -12,14 +12,14 @@ CREATE TABLE `user` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`login` varchar(50) NOT NULL,
 	`password` varchar(50) NOT NULL,
-	`max_score` int(8) DEFAULT 0,
+	`max_score` int(8) DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE (login)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `session` (
 	`id` int (11) NOT NULL AUTO_INCREMENT,
-	`session_id` varchar(250) NOT NULL UNIQUE,
+	`session_id` varchar(250) NOT NULL,
 	`user_id` int (11) NOT NULL,
 	`creation_time` DATETIME NOT NULL,
 	`last_accessed_time` DATETIME NOT NULL,

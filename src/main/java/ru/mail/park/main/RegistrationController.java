@@ -52,7 +52,7 @@ public class RegistrationController {
     }
 
     @RequestMapping(path = "/registration", method = RequestMethod.POST)
-    public ResponseEntity registration(@RequestBody @Valid UserDataRequest body) {
+    public ResponseEntity registration(@RequestBody @Valid UserDataRequest body, HttpSession session) {
 
         final String login = body.getLogin();
         final String password = body.getPassword();
@@ -62,16 +62,21 @@ public class RegistrationController {
         if (user != null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ErrorResponse(HttpStatus.FORBIDDEN.toString(), ErrorResponse.USER_ALREADY_EXISTS_MSG));
-        } else {
-            user = new UserDataSet(login, password);
         }
+        user = new UserDataSet(login, password);
 
-        accountService.addUser(user);
-        return ok(new SuccessResponse(login));
+        final Long id = accountService.addUser(user);
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ErrorResponse.SERVER_ERROR_MSG));
+        }
+        sessionService.addUser(session, user);
+        return ok(new SuccessResponse(id));
     }
 
     @RequestMapping(path = "/auth", method = RequestMethod.POST)
     public ResponseEntity auth(@RequestBody @Valid UserDataRequest body, HttpSession session) {
+
 
         final String login = body.getLogin();
         final String password = body.getPassword();
