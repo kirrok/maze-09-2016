@@ -59,8 +59,6 @@ public class UserDAO {
                     final UserDataSet tmpUser =
                             new UserDataSet(rs.getString("login"), rs.getString("password"));
                     tmpUser.setMaxScore(rs.getInt("max_score"));
-                    System.out.println("ID FROM getUserById " + rs.getLong("id"));
-
                     tmpUser.setId(rs.getLong("id"));
                     return tmpUser;
                 }, userId);

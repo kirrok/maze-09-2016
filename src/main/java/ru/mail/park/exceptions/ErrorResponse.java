@@ -8,6 +8,7 @@ public final class ErrorResponse {
     public static final String NOT_LOGGED_IN_MSG = "Not logged in";
     public static final String NOT_FOUND_MSG = "Incorrect request (semantic)";
     public static final String ACCESS_IS_DENIED = "Access is denied";
+    public static final String USER_NOT_EXIST = "User does not exist";
 
     private String msg;
     private String error;

@@ -103,7 +103,7 @@ public class RegistrationController {
     }
 
     @RequestMapping(path = "/user/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@PathVariable("id") long id,  HttpSession session) {
+    public ResponseEntity<?> getUser(@PathVariable("id") long id, HttpSession session) {
         final UserDataSet loggedInUser = sessionService.getUser(session);
 
         if (loggedInUser == null) {
@@ -111,6 +111,10 @@ public class RegistrationController {
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
         final UserDataSet user = accountService.getUserById(id);
+        if (user == null) {
+            return ResponseEntity
+                    .ok(new ErrorResponse(HttpStatus.NO_CONTENT.toString(), ErrorResponse.USER_NOT_EXIST));
+        }
         return ResponseEntity.ok(user);
     }
 

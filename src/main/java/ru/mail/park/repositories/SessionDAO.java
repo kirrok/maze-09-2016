@@ -22,7 +22,6 @@ public class SessionDAO {
 
     public long getUserId(HttpSession session) {
         final String SQL = "SELECT user_id FROM session WHERE session_id = ?;";
-        System.out.println("ID FROM DB: " + jdbcTemplate.queryForObject(SQL, Long.class, session.getId()));
         return jdbcTemplate.queryForObject(SQL, Long.class, session.getId());
     }
 
