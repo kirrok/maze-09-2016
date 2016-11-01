@@ -1,6 +1,6 @@
 
-CREATE DATABASE IF NOT EXISTS `maze_db`;
-USE `maze_db`;
+# CREATE DATABASE IF NOT EXISTS `maze_db`;
+# USE `maze_db`;
 
 SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `user`;
