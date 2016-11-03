@@ -1,12 +1,9 @@
 package ru.mail.park.repositories;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import ru.mail.park.Application;
 import ru.mail.park.dataSets.UserDataSet;
 
 import java.sql.PreparedStatement;
@@ -25,8 +22,8 @@ public class UserDAO {
     final String ADD_USER = "INSERT INTO user (login, password) VALUES(?, ?);";
     final String GET_USER_BY_LOGIN = "SELECT * FROM user WHERE login = ?;";
     final String GET_USER_BY_ID = "SELECT * FROM user WHERE id = ?;";
-    final String UPDATE_USER = "UPDATE user SET max_score = ?, password = ?, login = ? WHERE id = ?;";
-    final String GET_SCORES = "SELECT login, max_score FROM user order by -max_score LIMIT ?;";
+    final String UPDATE_USER = "UPDATE user SET password = ?, login = ? WHERE id = ?;";
+    final String GET_SCORES = "SELECT login, max_score FROM user order by max_score DESC LIMIT ?;";
     final String DELETE_USER = "DELETE FROM user WHERE id = ?";
 
 
@@ -76,7 +73,7 @@ public class UserDAO {
     }
 
     public void updateUser(UserDataSet user) {
-        jdbcTemplate.update(UPDATE_USER, user.getMaxScore(), user.getPassword(), user.getLogin(), user.getId());
+        jdbcTemplate.update(UPDATE_USER, user.getPassword(), user.getLogin(), user.getId());
     }
 
     public List<Map<String, Object>> getUsersScore(String limit) {

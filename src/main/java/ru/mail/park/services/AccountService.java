@@ -8,7 +8,7 @@ import ru.mail.park.dataSets.UserDataSet;
 public interface AccountService {
     Long addUser(UserDataSet user);
 
-    void deleteUser(long id);
+    void deleteUser(Long user);
 
     void updateUser(UserDataSet user);
 

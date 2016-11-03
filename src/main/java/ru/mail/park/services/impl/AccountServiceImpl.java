@@ -36,9 +36,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteUser(long id) {
+    public void deleteUser(Long userId) {
         try {
-            userDao.deleteUser(id);
+            userDao.deleteUser(userId);
         } catch (DataAccessException e) {
             Application.logger.warn(e);
         }

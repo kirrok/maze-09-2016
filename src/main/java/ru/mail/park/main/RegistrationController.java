@@ -1,7 +1,6 @@
 package ru.mail.park.main;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.mail.park.exceptions.ErrorResponse;
 import ru.mail.park.dataSets.UserDataSet;
 import ru.mail.park.services.impl.AccountServiceImpl;
-import ru.mail.park.services.impl.SessionServiceImpl;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -26,24 +24,22 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 public class RegistrationController {
     private final AccountServiceImpl accountService;
-    private final SessionServiceImpl sessionService;
+
+    private final String USER_ID = "userId";
 
     @Autowired
-    public RegistrationController(AccountServiceImpl accountService,
-                                  SessionServiceImpl sessionService) {
+    public RegistrationController(AccountServiceImpl accountService) {
         this.accountService = accountService;
-        this.sessionService = sessionService;
     }
 
     @RequestMapping(path = "/session", method = RequestMethod.GET)
     public ResponseEntity sessionCheck(HttpSession session) {
-
-        final UserDataSet user = sessionService.getUser(session);
-        if (user == null) {
+        final String selfId = (String) session.getAttribute(USER_ID);
+        if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
-        return ok(new SuccessResponse(user.getId()));
+        return ok(new SuccessResponse(selfId));
     }
 
     @RequestMapping(path = "/scoreboard", method = RequestMethod.GET)
@@ -53,7 +49,6 @@ public class RegistrationController {
 
     @RequestMapping(path = "/registration", method = RequestMethod.POST)
     public ResponseEntity registration(@RequestBody @Valid UserDataRequest body, HttpSession session) {
-
         final String login = body.getLogin();
         final String password = body.getPassword();
 
@@ -70,14 +65,13 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ErrorResponse.SERVER_ERROR_MSG));
         }
-        sessionService.addUser(session, user);
+        session.setAttribute(USER_ID, id.toString());
+
         return ok(new SuccessResponse(id));
     }
 
     @RequestMapping(path = "/auth", method = RequestMethod.POST)
     public ResponseEntity auth(@RequestBody @Valid UserDataRequest body, HttpSession session) {
-
-
         final String login = body.getLogin();
         final String password = body.getPassword();
 
@@ -87,35 +81,30 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.AUTHORIZATION_ERROR_MSG));
         }
+        session.setAttribute(USER_ID, user.getId());
 
-        sessionService.addUser(session, user);
         return ok(new SuccessResponse(user.getId()));
     }
 
     @RequestMapping(path = "/logout", method = RequestMethod.DELETE)
     public ResponseEntity logout(HttpSession session) {
-
-        final UserDataSet user = sessionService.getUser(session);
-        Util.println(session.getId());
-
-        if (user == null) {
+        final String selfId = (String) session.getAttribute(USER_ID);
+        if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
-
-        sessionService.delUser(session);
-        return ok(new SuccessResponse(user.getId()));
+        session.removeAttribute(USER_ID);
+        return ok(new SuccessResponse(selfId));
     }
 
     @RequestMapping(path = "/user/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@PathVariable("id") long id, HttpSession session) {
-        final UserDataSet loggedInUser = sessionService.getUser(session);
-
-        if (loggedInUser == null) {
+    public ResponseEntity<?> getUser(@PathVariable("id") long userId, HttpSession session) {
+        final String selfId = (String) session.getAttribute(USER_ID);
+        if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
-        final UserDataSet user = accountService.getUserById(id);
+        final UserDataSet user = accountService.getUserById(userId);
         if (user == null) {
             return ResponseEntity
                     .ok(new ErrorResponse(HttpStatus.NO_CONTENT.toString(), ErrorResponse.USER_NOT_EXIST));
@@ -125,30 +114,31 @@ public class RegistrationController {
 
     @RequestMapping(path = "/user", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@RequestBody @Valid UserDataRequest body, HttpSession session) {
-        final UserDataSet user = sessionService.getUser(session);
-        if (user == null) {
+        final String selfId = (String) session.getAttribute(USER_ID);
+        if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
-
         final UserDataSet newUserData = new UserDataSet(body.getLogin(), body.getPassword());
-        newUserData.setId(user.getId());
-        newUserData.setMaxScore(user.getMaxScore());
+
+        newUserData.setId(Long.parseLong(selfId));
         accountService.updateUser(newUserData);
 
-        return ResponseEntity.ok(new SuccessResponse(newUserData.getId()));
+        return ResponseEntity.ok(new SuccessResponse(selfId));
     }
 
     @RequestMapping(path = "/user", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(HttpSession session) {
-        final UserDataSet user = sessionService.getUser(session);
-        if (user == null) {
+        final String selfId = (String) session.getAttribute(USER_ID);
+        if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
 
-        accountService.deleteUser(user.getId());
-        return ResponseEntity.ok(new SuccessResponse(user.getId()));
+        accountService.deleteUser(Long.parseLong(selfId));
+        session.removeAttribute("userId");
+
+        return ResponseEntity.ok(new SuccessResponse(selfId));
     }
 
     private static final class UserDataRequest {
