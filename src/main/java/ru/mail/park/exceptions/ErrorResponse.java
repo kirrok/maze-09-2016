@@ -7,30 +7,13 @@ public final class ErrorResponse {
     public static final String AUTHORIZATION_ERROR_MSG = "Wrong login or password";
     public static final String NOT_LOGGED_IN_MSG = "Not logged in";
     public static final String NOT_FOUND_MSG = "Incorrect request (semantic)";
-    public static final String ACCESS_IS_DENIED = "Access is denied";
     public static final String USER_NOT_EXIST = "User does not exist";
 
-    private String msg;
-    private String error;
+    private final String msg;
+    private final String error;
 
     public ErrorResponse(String error, String msg) {
         this.msg = msg;
-        this.error = error;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
         this.error = error;
     }
 }

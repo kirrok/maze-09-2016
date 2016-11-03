@@ -1,19 +1,19 @@
 package ru.mail.park.services;
 
-import ru.mail.park.dataSets.UserDataSet;
+import ru.mail.park.models.User;
 
 /**
  * Created by kirrok on 21.10.16.
  */
 public interface AccountService {
-    Long addUser(UserDataSet user);
+    Long addUser(User user);
 
     void deleteUser(Long user);
 
-    void updateUser(UserDataSet user);
+    void updateUser(User user);
 
-    UserDataSet getUserByLogin(String email);
+    User getUserByLogin(String email);
 
-    UserDataSet getUserById(long id);
+    User getUserById(long id);
 
 }

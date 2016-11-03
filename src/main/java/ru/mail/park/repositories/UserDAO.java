@@ -1,10 +1,11 @@
 package ru.mail.park.repositories;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import ru.mail.park.dataSets.UserDataSet;
+import ru.mail.park.models.User;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -14,17 +15,16 @@ import java.util.Map;
  * Created by kirrok on 21.10.16.
  */
 
-@SuppressWarnings("all")
 @Repository
 public class UserDAO {
     private JdbcTemplate jdbcTemplate;
 
-    final String ADD_USER = "INSERT INTO user (login, password) VALUES(?, ?);";
-    final String GET_USER_BY_LOGIN = "SELECT * FROM user WHERE login = ?;";
-    final String GET_USER_BY_ID = "SELECT * FROM user WHERE id = ?;";
-    final String UPDATE_USER = "UPDATE user SET password = ?, login = ? WHERE id = ?;";
-    final String GET_SCORES = "SELECT login, max_score FROM user order by max_score DESC LIMIT ?;";
-    final String DELETE_USER = "DELETE FROM user WHERE id = ?";
+    private static final String ADD_USER = "INSERT INTO user (login, password) VALUES(?, ?);";
+    private static final String GET_USER_BY_LOGIN = "SELECT * FROM user WHERE login = ?;";
+    private static final String GET_USER_BY_ID = "SELECT * FROM user WHERE id = ?;";
+    private static final String UPDATE_USER = "UPDATE user SET password = ?, login = ? WHERE id = ?;";
+    private static final String GET_SCORES = "SELECT login, max_score FROM user order by max_score DESC LIMIT ?;";
+    private static final String DELETE_USER = "DELETE FROM user WHERE id = ?";
 
 
     public UserDAO(JdbcTemplate jdbcTemplate) {
@@ -32,7 +32,7 @@ public class UserDAO {
     }
 
     public Long addUser(String login, String password) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(
                 connection -> {
@@ -50,29 +50,23 @@ public class UserDAO {
         jdbcTemplate.update(DELETE_USER, id);
     }
 
-    public UserDataSet getUserByLogin(String login) {
-        return jdbcTemplate.queryForObject(GET_USER_BY_LOGIN,
-                (rs, numRow) -> {
-                    final UserDataSet tmpUser =
-                            new UserDataSet(rs.getString("login"), rs.getString("password"));
-                    tmpUser.setMaxScore(rs.getInt("max_score"));
-                    tmpUser.setId(rs.getLong("id"));
-                    return tmpUser;
-                }, login);
+    private static final RowMapper<User> ROW_MAPPER = (rs, numRow) -> {
+        final User tmpUser =
+                new User(rs.getString("login"), rs.getString("password"));
+        tmpUser.setMaxScore(rs.getInt("max_score"));
+        tmpUser.setId(rs.getLong("id"));
+        return tmpUser;
+    };
+
+    public User getUserByLogin(String login) {
+        return jdbcTemplate.queryForObject(GET_USER_BY_LOGIN, ROW_MAPPER, login);
     }
 
-    public UserDataSet getUserById(long userId) {
-        return jdbcTemplate.queryForObject(GET_USER_BY_ID,
-                (rs, numRow) -> {
-                    final UserDataSet tmpUser =
-                            new UserDataSet(rs.getString("login"), rs.getString("password"));
-                    tmpUser.setMaxScore(rs.getInt("max_score"));
-                    tmpUser.setId(rs.getLong("id"));
-                    return tmpUser;
-                }, userId);
+    public User getUserById(long userId) {
+        return jdbcTemplate.queryForObject(GET_USER_BY_ID, ROW_MAPPER, userId);
     }
 
-    public void updateUser(UserDataSet user) {
+    public void updateUser(User user) {
         jdbcTemplate.update(UPDATE_USER, user.getPassword(), user.getLogin(), user.getId());
     }
 

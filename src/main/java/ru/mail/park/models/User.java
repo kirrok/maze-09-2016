@@ -1,15 +1,15 @@
-package ru.mail.park.dataSets;
+package ru.mail.park.models;
 
 /**
  * Created by Solovyev on 17/09/16.
  */
-public class UserDataSet {
+public class User {
     private String login;
     private String password;
     private int maxScore;
     private long id;
 
-    public UserDataSet(String login, String password) {
+    public User(String login, String password) {
         this.login = login;
         this.password = password;
     }

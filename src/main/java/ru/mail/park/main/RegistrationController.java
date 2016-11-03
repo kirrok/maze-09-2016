@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.mail.park.exceptions.ErrorResponse;
-import ru.mail.park.dataSets.UserDataSet;
+import ru.mail.park.models.User;
 import ru.mail.park.services.impl.AccountServiceImpl;
 
 import javax.servlet.http.HttpSession;
@@ -52,13 +52,13 @@ public class RegistrationController {
         final String login = body.getLogin();
         final String password = body.getPassword();
 
-        UserDataSet user = accountService.getUserByLogin(login);
+        User user = accountService.getUserByLogin(login);
 
         if (user != null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ErrorResponse(HttpStatus.FORBIDDEN.toString(), ErrorResponse.USER_ALREADY_EXISTS_MSG));
         }
-        user = new UserDataSet(login, password);
+        user = new User(login, password);
 
         final Long id = accountService.addUser(user);
         if (id == null) {
@@ -75,7 +75,7 @@ public class RegistrationController {
         final String login = body.getLogin();
         final String password = body.getPassword();
 
-        final UserDataSet user = accountService.getUserByLogin(login);
+        final User user = accountService.getUserByLogin(login);
 
         if (user == null || !user.getPassword().equals(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -104,7 +104,7 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
-        final UserDataSet user = accountService.getUserById(userId);
+        final User user = accountService.getUserById(userId);
         if (user == null) {
             return ResponseEntity
                     .ok(new ErrorResponse(HttpStatus.NO_CONTENT.toString(), ErrorResponse.USER_NOT_EXIST));
@@ -119,7 +119,7 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
-        final UserDataSet newUserData = new UserDataSet(body.getLogin(), body.getPassword());
+        final User newUserData = new User(body.getLogin(), body.getPassword());
 
         newUserData.setId(Long.parseLong(selfId));
         accountService.updateUser(newUserData);

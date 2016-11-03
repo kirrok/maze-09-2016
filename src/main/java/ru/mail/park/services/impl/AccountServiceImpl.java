@@ -7,7 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mail.park.Application;
-import ru.mail.park.dataSets.UserDataSet;
+import ru.mail.park.models.User;
 import ru.mail.park.repositories.UserDAO;
 import ru.mail.park.services.AccountService;
 
@@ -26,7 +26,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Nullable
     @Override
-    public Long addUser(UserDataSet user) {
+    public Long addUser(User user) {
         try {
             return userDao.addUser(user.getLogin(), user.getPassword());
         } catch (DataAccessException e) {
@@ -46,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Nullable
     @Override
-    public UserDataSet getUserByLogin(String login) {
+    public User getUserByLogin(String login) {
         try {
             return userDao.getUserByLogin(login);
         } catch (EmptyResultDataAccessException e) {
@@ -57,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Nullable
     @Override
-    public UserDataSet getUserById(long id) {
+    public User getUserById(long id) {
         try {
             return userDao.getUserById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -67,7 +67,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateUser(UserDataSet user) {
+    public void updateUser(User user) {
         userDao.updateUser(user);
     }
 
