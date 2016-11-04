@@ -88,7 +88,7 @@ public class RegistrationController {
 
     @RequestMapping(path = "/api/logout", method = RequestMethod.DELETE)
     public ResponseEntity logout(HttpSession session) {
-        final String selfId = (String) session.getAttribute(USER_ID);
+        final Long selfId = (Long)session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
@@ -99,7 +99,7 @@ public class RegistrationController {
 
     @RequestMapping(path = "/api/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable("id") long userId, HttpSession session) {
-        final String selfId = (String) session.getAttribute(USER_ID);
+        final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
@@ -114,14 +114,14 @@ public class RegistrationController {
 
     @RequestMapping(path = "/api/user", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@RequestBody @Valid UserDataRequest body, HttpSession session) {
-        final String selfId = (String) session.getAttribute(USER_ID);
+        final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
         final User newUserData = new User(body.getLogin(), body.getPassword());
 
-        newUserData.setId(Long.parseLong(selfId));
+        newUserData.setId(selfId);
         accountService.updateUser(newUserData);
 
         return ResponseEntity.ok(new SuccessResponse(selfId));
@@ -129,13 +129,13 @@ public class RegistrationController {
 
     @RequestMapping(path = "/api/user", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(HttpSession session) {
-        final String selfId = (String) session.getAttribute(USER_ID);
+        final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
         }
 
-        accountService.deleteUser(Long.parseLong(selfId));
+        accountService.deleteUser(selfId);
         session.removeAttribute("userId");
 
         return ResponseEntity.ok(new SuccessResponse(selfId));
@@ -160,21 +160,10 @@ public class RegistrationController {
     }
 
     private static final class SuccessResponse {
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        private String login;
-        @JsonInclude(JsonInclude.Include.NON_DEFAULT)
         private long id;
-
-        private SuccessResponse(String login) {
-            this.login = login;
-        }
 
         private SuccessResponse(long id) {
             this.id = id;
-        }
-
-        public String getLogin() {
-            return login;
         }
 
         public long getId() {
