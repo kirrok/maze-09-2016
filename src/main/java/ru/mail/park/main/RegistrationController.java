@@ -25,7 +25,7 @@ import static org.springframework.http.ResponseEntity.ok;
 public class RegistrationController {
     private final AccountServiceImpl accountService;
 
-    private final String USER_ID = "userId";
+    private final String USER_ID = "id";
 
     @Autowired
     public RegistrationController(AccountServiceImpl accountService) {
