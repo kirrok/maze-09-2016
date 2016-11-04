@@ -136,7 +136,7 @@ public class RegistrationController {
         }
 
         accountService.deleteUser(selfId);
-        session.removeAttribute("userId");
+        session.removeAttribute(USER_ID);
 
         return ResponseEntity.ok(new SuccessResponse(selfId));
     }

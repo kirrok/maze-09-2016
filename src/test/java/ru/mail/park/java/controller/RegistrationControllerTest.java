@@ -30,7 +30,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
     @Test
     public void testRegistration() throws Exception {
         when(accountService.getUserByLogin(LOGIN)).thenReturn(null);
-        User user = new User(LOGIN, PASSWORD);
+        final User user = new User(LOGIN, PASSWORD);
         when(accountService.addUser(user)).thenReturn(ID);
 
         mockMvc.perform(post("/api/registration")
