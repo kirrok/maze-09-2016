@@ -32,9 +32,9 @@ public class RegistrationController {
         this.accountService = accountService;
     }
 
-    @RequestMapping(path = "/session", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/session", method = RequestMethod.GET)
     public ResponseEntity sessionCheck(HttpSession session) {
-        final String selfId = (String) session.getAttribute(USER_ID);
+        final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
@@ -42,12 +42,12 @@ public class RegistrationController {
         return ok(new SuccessResponse(selfId));
     }
 
-    @RequestMapping(path = "/scoreboard", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/scoreboard", method = RequestMethod.GET)
     public ResponseEntity score(@RequestParam("limit") String limit) {
         return ok(accountService.score(limit));
     }
 
-    @RequestMapping(path = "/registration", method = RequestMethod.POST)
+    @RequestMapping(path = "/api/registration", method = RequestMethod.POST)
     public ResponseEntity registration(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String login = body.getLogin();
         final String password = body.getPassword();
@@ -70,7 +70,7 @@ public class RegistrationController {
         return ok(new SuccessResponse(id));
     }
 
-    @RequestMapping(path = "/auth", method = RequestMethod.POST)
+    @RequestMapping(path = "/api/auth", method = RequestMethod.POST)
     public ResponseEntity auth(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String login = body.getLogin();
         final String password = body.getPassword();
@@ -86,7 +86,7 @@ public class RegistrationController {
         return ok(new SuccessResponse(user.getId()));
     }
 
-    @RequestMapping(path = "/logout", method = RequestMethod.DELETE)
+    @RequestMapping(path = "/api/logout", method = RequestMethod.DELETE)
     public ResponseEntity logout(HttpSession session) {
         final String selfId = (String) session.getAttribute(USER_ID);
         if (selfId == null) {
@@ -97,7 +97,7 @@ public class RegistrationController {
         return ok(new SuccessResponse(selfId));
     }
 
-    @RequestMapping(path = "/user/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable("id") long userId, HttpSession session) {
         final String selfId = (String) session.getAttribute(USER_ID);
         if (selfId == null) {
@@ -112,7 +112,7 @@ public class RegistrationController {
         return ResponseEntity.ok(user);
     }
 
-    @RequestMapping(path = "/user", method = RequestMethod.PUT)
+    @RequestMapping(path = "/api/user", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String selfId = (String) session.getAttribute(USER_ID);
         if (selfId == null) {
@@ -127,7 +127,7 @@ public class RegistrationController {
         return ResponseEntity.ok(new SuccessResponse(selfId));
     }
 
-    @RequestMapping(path = "/user", method = RequestMethod.DELETE)
+    @RequestMapping(path = "/api/user", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(HttpSession session) {
         final String selfId = (String) session.getAttribute(USER_ID);
         if (selfId == null) {

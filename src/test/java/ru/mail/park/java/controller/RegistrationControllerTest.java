@@ -14,7 +14,7 @@ import org.springframework.mock.web.MockHttpSession;
 public class RegistrationControllerTest extends AbstractControllerTest {
 	@Test
 	public void testRegistration() throws Exception {
-		mockMvc.perform(post("/registration")
+		mockMvc.perform(post("/api/registration")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"login\":\"login\",\"password\":\"test\"}")).andExpect(status().isOk());
 	}
@@ -23,7 +23,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
 	public void testLogin() throws Exception {
 		testRegistration();
 		MockHttpSession mockHttpSession = new MockHttpSession();
-		mockMvc.perform(post("/auth")
+		mockMvc.perform(post("/api/auth")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"login\":\"login\",\"password\":\"test\"}")
 				.session(mockHttpSession)).andExpect(status().isOk());

@@ -3,9 +3,12 @@ package ru.mail.park.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * Created by Solovyev on 17/09/16.
  */
+@SuppressWarnings("OverlyComplexBooleanExpression")
 public class User {
     private String login;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -17,10 +20,7 @@ public class User {
         this.login = login;
         this.password = password;
     }
-    public String toString() {
 
-        return login + " " + password + " " + Integer.toString(maxScore ) + " " + Long.toString(id);
-    }
     public User() {
     }
 
@@ -46,5 +46,22 @@ public class User {
 
     public long getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        final User user = (User)obj;
+
+        return user.id == this.id &&
+                Objects.equals(user.login, this.login) &&
+                user.maxScore == this.maxScore &&
+                Objects.equals(user.password, this.password);
     }
 }

@@ -1,10 +1,13 @@
 package ru.mail.park.repositories;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.mail.park.Application;
 import ru.mail.park.models.User;
 
 import java.sql.PreparedStatement;
@@ -42,7 +45,6 @@ public class UserDAO {
                     return ps;
                 },
                 keyHolder);
-
         return keyHolder.getKey().longValue();
     }
 

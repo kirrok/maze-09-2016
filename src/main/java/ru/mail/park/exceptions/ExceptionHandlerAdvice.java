@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,10 +15,12 @@ import ru.mail.park.Application;
 /**
  * Created by viacheslav on 03.10.16.
  */
+
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class,
+            MissingServletRequestParameterException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleValidationException(Exception e) {
@@ -39,4 +42,6 @@ public class ExceptionHandlerAdvice {
     public ErrorResponse handle404() {
         return new ErrorResponse(HttpStatus.NOT_FOUND.toString(), ErrorResponse.NOT_FOUND_MSG);
     }
+
+
 }
