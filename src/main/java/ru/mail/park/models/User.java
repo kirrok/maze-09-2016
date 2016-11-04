@@ -1,10 +1,14 @@
 package ru.mail.park.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Solovyev on 17/09/16.
  */
 public class User {
     private String login;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private int maxScore;
     private long id;
@@ -12,6 +16,12 @@ public class User {
     public User(String login, String password) {
         this.login = login;
         this.password = password;
+    }
+    public String toString() {
+
+        return login + " " + password + " " + Integer.toString(maxScore ) + " " + Long.toString(id);
+    }
+    public User() {
     }
 
     public void setMaxScore(int maxScore) {
