@@ -1,8 +1,10 @@
 package ru.mail.park.main;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.mail.park.exceptions.ErrorMsg;
 import ru.mail.park.models.User;
@@ -21,9 +23,13 @@ import static org.springframework.http.ResponseEntity.ok;
 public class RegistrationController extends AbstractAccountController {
     private final String USER_ID = "id";
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
     @RequestMapping(path = "/api/session", method = RequestMethod.GET)
     public ResponseEntity<ResponseBody> sessionCheck(HttpSession session) {
-        final Long selfId = (Long) session.getAttribute(USER_ID);
+        final Long selfId = (Long)session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
@@ -35,6 +41,7 @@ public class RegistrationController extends AbstractAccountController {
     public ResponseEntity<ResponseBody> registration(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String login = body.getLogin();
         final String password = body.getPassword();
+        System.out.println(passwordEncoder);
         User user = accountService.getUserByLogin(login);
 
         if (user != null) {
@@ -48,7 +55,7 @@ public class RegistrationController extends AbstractAccountController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseBody(ErrorMsg.SERVER_ERROR_MSG));
         }
-        session.setAttribute(USER_ID, id.toString());
+        session.setAttribute(USER_ID, id);
 
         return ok(new ResponseBody(id));
     }
@@ -56,11 +63,10 @@ public class RegistrationController extends AbstractAccountController {
     @RequestMapping(path = "/api/auth", method = RequestMethod.POST)
     public ResponseEntity<ResponseBody> auth(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String login = body.getLogin();
-        final String password = body.getPassword();
 
         final User user = accountService.getUserByLogin(login);
 
-        if (user == null || !user.getPassword().equals(password)) {
+        if (user == null || !user.getPassword().equals(body.getPassword())) { // тут нужна другая проверка пароля
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseBody(ErrorMsg.AUTHORIZATION_ERROR_MSG));
         }
@@ -89,8 +95,8 @@ public class RegistrationController extends AbstractAccountController {
         }
         final User user = accountService.getUserById(userId);
         if (user == null) {
-            return ResponseEntity
-                    .ok(new ResponseBody(ErrorMsg.USER_NOT_EXIST));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(new ResponseBody(ErrorMsg.USER_NOT_EXIST));
         }
         return ResponseEntity.ok(user);
     }
@@ -102,7 +108,8 @@ public class RegistrationController extends AbstractAccountController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
         }
-        final User newUserData = new User(body.getLogin(), body.getPassword());
+
+        final User newUserData = new User(body.getLogin(),body.getPassword());
 
         newUserData.setId(selfId);
         accountService.updateUser(newUserData);

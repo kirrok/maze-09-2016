@@ -1,6 +1,11 @@
 package ru.mail.park.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
@@ -8,7 +13,9 @@ import java.util.Objects;
  * Created by kirork on 17/09/16.
  */
 @SuppressWarnings("OverlyComplexBooleanExpression")
+@Component
 public class User {
+
     private String login;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -43,6 +50,10 @@ public class User {
         this.id = id;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public long getId() {
         return id;
     }
@@ -56,11 +67,20 @@ public class User {
             return false;
         }
 
-        final User user = (User)obj;
+        final User user = (User) obj;
 
         return user.id == this.id &&
                 Objects.equals(user.login, this.login) &&
                 user.maxScore == this.maxScore &&
                 Objects.equals(user.password, this.password);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = login != null ? login.hashCode() : 0;
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + maxScore;
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        return result;
     }
 }

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mail.park.models.User;
@@ -18,7 +19,10 @@ import java.util.Map;
 @Service
 @Transactional
 public class AccountServiceImpl implements AccountService {
+    @Autowired
     UserDAO userDao;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     private static final Logger logger = LogManager.getLogger("main");
 
@@ -31,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Long addUser(User user) {
         try {
-            return userDao.addUser(user.getLogin(), user.getPassword());
+            return userDao.addUser(user.getLogin(), passwordEncoder.encode(user.getPassword()));
         } catch (DataAccessException e) {
             return null;
         }
@@ -70,6 +74,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.updateUser(user);
     }
 

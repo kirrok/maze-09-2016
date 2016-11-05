@@ -4,12 +4,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 import ru.mail.park.models.User;
 import ru.mail.park.repositories.UserDAO;
 import ru.mail.park.services.AccountService;
 import ru.mail.park.services.impl.AccountServiceImpl;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,10 +24,13 @@ public class RegistrationControllerTest extends AbstractControllerTest {
 
     @Autowired
     UserDAO userDAO;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     private static final String LOGIN = "testLogin";
     private static final String PASSWORD = "testPassword";
-    private static final Long ID = 2L;
+    private static final Long ID = 1L;
+
 
     @Test
     public void testRegistration() throws Exception {
@@ -35,8 +40,8 @@ public class RegistrationControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"login\":\"testLogin\",\"password\":\"testPassword\"}")
                 .session(mockHttpSession))
-                .andExpect(jsonPath("id").isNotEmpty())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").isNotEmpty());
 
         Assert.notNull(mockHttpSession.getAttribute("id"));
     }
@@ -46,15 +51,15 @@ public class RegistrationControllerTest extends AbstractControllerTest {
         final User user = new User(LOGIN, PASSWORD);
 
         final AccountService accountService = new AccountServiceImpl(userDAO);
-        accountService.addUser(user);
+        final long id = accountService.addUser(user);
 
         final MockHttpSession mockHttpSession = new MockHttpSession();
         mockMvc.perform(post("/api/auth")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"login\":\"testLogin\",\"password\":\"testPassword\"}")
                 .session(mockHttpSession))
-                .andExpect(jsonPath("id").value(1))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id));
 
         Assert.notNull(mockHttpSession.getAttribute("id"));
     }
@@ -63,17 +68,22 @@ public class RegistrationControllerTest extends AbstractControllerTest {
     public void testSession() throws Exception {
         mockMvc.perform(get("/api/session")
                 .sessionAttr("id", ID))
-                .andExpect(jsonPath("id").value(ID))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(ID));
     }
 
     @Test
     public void testLogoutOK() throws Exception {
+        final MockHttpSession mockHttpSession = new MockHttpSession();
+
         mockMvc.perform(delete("/api/logout")
                 .contentType(MediaType.APPLICATION_JSON)
+                .session(mockHttpSession)
                 .sessionAttr("id", ID))
-                .andExpect(jsonPath("id").value(ID))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(ID));
+
+        Assert.isNull(mockHttpSession.getAttribute("id"));
     }
 
     @Test
@@ -86,35 +96,52 @@ public class RegistrationControllerTest extends AbstractControllerTest {
     @Test
     public void testGetUser() throws Exception {
         final User user = new User(LOGIN, PASSWORD);
-        user.setId(ID);
 
         final AccountService accountService = new AccountServiceImpl(userDAO);
-        accountService.addUser(user);
+        final long id = accountService.addUser(user);
 
-        mockMvc.perform(get("/api/user/2")
-                .sessionAttr("id", ID)
-                .param("id", "2"))
-                .andExpect(jsonPath("id").value(2))
+        mockMvc.perform(get("/api/user/" + id)
+                .sessionAttr("id", ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("login").value(LOGIN))
                 .andExpect(jsonPath("maxScore").exists())
-                .andExpect(jsonPath("password").doesNotExist())
-                .andExpect(status().isOk());
+                .andExpect(jsonPath("password").doesNotExist());
     }
 
     @Test
     public void testUpdateUser() throws Exception {
+        final User user = new User(LOGIN, PASSWORD);
+
+        final AccountService accountService = new AccountServiceImpl(userDAO);
+        final long id = accountService.addUser(user);
+
+
         mockMvc.perform(put("/api/user")
-                .contentType(MediaType.APPLICATION_JSON).sessionAttr("id", ID)
+                .contentType(MediaType.APPLICATION_JSON).sessionAttr("id", id)
                 .content("{\"login\":\"newLogin\",\"password\":\"newPassword\"}"))
-                .andExpect(jsonPath("id").value(ID))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id));
+
+        final User updatedUser = new User("newLogin", "newPassword");
+        updatedUser.setId(id);
+
+        assertThat(accountService.getUserById(id)).isEqualTo(updatedUser);
     }
 
     @Test
     public void testDeleteUser() throws Exception {
+        final User user = new User(LOGIN, PASSWORD);
+
+        final AccountService accountService = new AccountServiceImpl(userDAO);
+        final long id = accountService.addUser(user);
+
         mockMvc.perform(delete("/api/user")
-                .sessionAttr("id", ID))
-                .andExpect(jsonPath("id").value(ID))
-                .andExpect(status().isOk());
+                .sessionAttr("id", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id));
+
+        assertThat(accountService.getUserById(id)).isNull();
+
     }
 }
