@@ -1,5 +1,7 @@
 package ru.mail.park.services.impl;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -19,6 +21,8 @@ import java.util.Map;
 public class AccountServiceImpl implements AccountService {
     UserDAO userDao;
 
+    private static final Logger logger = LogManager.getLogger("main");
+
     @Autowired
     public AccountServiceImpl(UserDAO userDao) {
         this.userDao = userDao;
@@ -30,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             return userDao.addUser(user.getLogin(), user.getPassword());
         } catch (DataAccessException e) {
-            Application.logger.warn(e);
+            logger.info(e);
             return null;
         }
     }
@@ -40,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             userDao.deleteUser(userId);
         } catch (DataAccessException e) {
-            Application.logger.warn(e);
+            logger.info(e);
         }
     }
 
@@ -50,7 +54,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             return userDao.getUserByLogin(login);
         } catch (EmptyResultDataAccessException e) {
-            Application.logger.warn(e);
+            logger.info(e);
             return null;
         }
     }
@@ -61,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             return userDao.getUserById(id);
         } catch (EmptyResultDataAccessException e) {
-            Application.logger.warn(e);
+            logger.info(e);
             return null;
         }
     }
@@ -71,12 +75,13 @@ public class AccountServiceImpl implements AccountService {
         userDao.updateUser(user);
     }
 
+    @Nullable
     @Override
     public List<Map<String, Object>> score(String limit) {
         try {
             return userDao.getUsersScore(limit);
         } catch (DataAccessException e) {
-            Application.logger.warn(e);
+            logger.info(e);
             return null;
         }
 

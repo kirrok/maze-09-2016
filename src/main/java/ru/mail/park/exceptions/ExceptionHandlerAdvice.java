@@ -1,5 +1,7 @@
 package ru.mail.park.exceptions;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import ru.mail.park.Application;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * Created by viacheslav on 03.10.16.
  */
@@ -19,19 +24,22 @@ import ru.mail.park.Application;
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
 
+    private static final Logger logger = LogManager.getLogger("main");
+
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class,
             MissingServletRequestParameterException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorMsg handleValidationException(Exception e) {
-        Application.logger.warn(e);
+        logger.error("ПРИШЛИ ПЛОХИЕ ДАННЫЕ.", e);
         return new ErrorMsg(ErrorMsg.VALIDATION_ERROR_MSG);
     }
 
     @ExceptionHandler({NoHandlerFoundException.class, HttpRequestMethodNotSupportedException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ErrorMsg handle404() {
+    public ErrorMsg handle404(Exception e) {
+        logger.warn(e);
         return new ErrorMsg(ErrorMsg.NOT_FOUND_MSG);
     }
 
@@ -39,7 +47,7 @@ public class ExceptionHandlerAdvice {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleGlobalException(Exception e) {
-        Application.logger.warn(e);
+        logger.error("ЧТО ТО ПОШЛО НЕ ТАК.", e);
         return new ErrorMsg(ErrorMsg.SERVER_ERROR_MSG);
     }
 
