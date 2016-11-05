@@ -1,12 +1,11 @@
 package ru.mail.park.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
 /**
- * Created by Solovyev on 17/09/16.
+ * Created by kirork on 17/09/16.
  */
 @SuppressWarnings("OverlyComplexBooleanExpression")
 public class User {

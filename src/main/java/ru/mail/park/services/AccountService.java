@@ -2,6 +2,9 @@ package ru.mail.park.services;
 
 import ru.mail.park.models.User;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by kirrok on 21.10.16.
  */
@@ -15,5 +18,7 @@ public interface AccountService {
     User getUserByLogin(String email);
 
     User getUserById(long id);
+
+    List<Map<String, Object>> score(String limit);
 
 }

@@ -1,6 +1,6 @@
 package ru.mail.park.exceptions;
 
-public final class ErrorResponse {
+public final class ErrorMsg {
     public static final String SERVER_ERROR_MSG = "Ёмаё, ошибка какая-то ;(";
     public static final String VALIDATION_ERROR_MSG = "Проверьте корректность вводимых дынных";
     public static final String USER_ALREADY_EXISTS_MSG = "Такой пользователь существует";
@@ -10,18 +10,12 @@ public final class ErrorResponse {
     public static final String USER_NOT_EXIST = "Такого пользователя, увы, нет";
 
     private final String msg;
-    private final String error;
 
-    public ErrorResponse(String error, String msg) {
+    public ErrorMsg(String msg) {
         this.msg = msg;
-        this.error = error;
     }
 
     public String getMsg() {
         return msg;
-    }
-
-    public String getError() {
-        return error;
     }
 }

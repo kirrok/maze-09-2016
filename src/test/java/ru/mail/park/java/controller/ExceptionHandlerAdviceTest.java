@@ -1,8 +1,9 @@
 package ru.mail.park.java.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.junit.Test;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ExceptionHandlerAdviceTest extends AbstractControllerTest{
 	
@@ -11,5 +12,6 @@ public class ExceptionHandlerAdviceTest extends AbstractControllerTest{
 		mockMvc.perform(get("/shouldbenosuchaddress"))
 		.andExpect(status().isNotFound());
 	}
+
 
 }

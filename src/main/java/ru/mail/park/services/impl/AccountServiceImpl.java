@@ -71,7 +71,14 @@ public class AccountServiceImpl implements AccountService {
         userDao.updateUser(user);
     }
 
+    @Override
     public List<Map<String, Object>> score(String limit) {
-        return userDao.getUsersScore(limit);
+        try {
+            return userDao.getUsersScore(limit);
+        } catch (DataAccessException e) {
+            Application.logger.warn(e);
+            return null;
+        }
+
     }
 }

@@ -1,14 +1,11 @@
 package ru.mail.park.main;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import ru.mail.park.exceptions.ErrorResponse;
+import ru.mail.park.exceptions.ErrorMsg;
 import ru.mail.park.models.User;
-import ru.mail.park.services.impl.AccountServiceImpl;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -17,38 +14,25 @@ import javax.validation.constraints.NotNull;
 import static org.springframework.http.ResponseEntity.ok;
 
 /**
- * Created by Solovyev on 06/09/16.
+ * Created by kirrok on 06/09/16.
  */
 
-@Transactional
 @RestController
-public class RegistrationController {
-    private final AccountServiceImpl accountService;
-
+public class RegistrationController extends AbstractAccountController {
     private final String USER_ID = "id";
 
-    @Autowired
-    public RegistrationController(AccountServiceImpl accountService) {
-        this.accountService = accountService;
-    }
-
     @RequestMapping(path = "/api/session", method = RequestMethod.GET)
-    public ResponseEntity sessionCheck(HttpSession session) {
+    public ResponseEntity<ResponseBody> sessionCheck(HttpSession session) {
         final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
+                    .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
         }
-        return ok(new SuccessResponse(selfId));
-    }
-
-    @RequestMapping(path = "/api/scoreboard", method = RequestMethod.GET)
-    public ResponseEntity score(@RequestParam("limit") String limit) {
-        return ok(accountService.score(limit));
+        return ok(new ResponseBody(selfId));
     }
 
     @RequestMapping(path = "/api/registration", method = RequestMethod.POST)
-    public ResponseEntity registration(@RequestBody @Valid UserDataRequest body, HttpSession session) {
+    public ResponseEntity<ResponseBody> registration(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String login = body.getLogin();
         final String password = body.getPassword();
 
@@ -56,22 +40,22 @@ public class RegistrationController {
 
         if (user != null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ErrorResponse(HttpStatus.FORBIDDEN.toString(), ErrorResponse.USER_ALREADY_EXISTS_MSG));
+                    .body(new ResponseBody(ErrorMsg.USER_ALREADY_EXISTS_MSG));
         }
         user = new User(login, password);
 
         final Long id = accountService.addUser(user);
         if (id == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ErrorResponse.SERVER_ERROR_MSG));
+                    .body(new ResponseBody(ErrorMsg.SERVER_ERROR_MSG));
         }
         session.setAttribute(USER_ID, id.toString());
 
-        return ok(new SuccessResponse(id));
+        return ok(new ResponseBody(id));
     }
 
     @RequestMapping(path = "/api/auth", method = RequestMethod.POST)
-    public ResponseEntity auth(@RequestBody @Valid UserDataRequest body, HttpSession session) {
+    public ResponseEntity<ResponseBody> auth(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String login = body.getLogin();
         final String password = body.getPassword();
 
@@ -79,22 +63,22 @@ public class RegistrationController {
 
         if (user == null || !user.getPassword().equals(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.AUTHORIZATION_ERROR_MSG));
+                    .body(new ResponseBody(ErrorMsg.AUTHORIZATION_ERROR_MSG));
         }
         session.setAttribute(USER_ID, user.getId());
 
-        return ok(new SuccessResponse(user.getId()));
+        return ok(new ResponseBody(user.getId()));
     }
 
     @RequestMapping(path = "/api/logout", method = RequestMethod.DELETE)
-    public ResponseEntity logout(HttpSession session) {
-        final Long selfId = (Long)session.getAttribute(USER_ID);
+    public ResponseEntity<ResponseBody> logout(HttpSession session) {
+        final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
+                    .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
         }
         session.removeAttribute(USER_ID);
-        return ok(new SuccessResponse(selfId));
+        return ok(new ResponseBody(selfId));
     }
 
     @RequestMapping(path = "/api/user/{id}", method = RequestMethod.GET)
@@ -102,46 +86,47 @@ public class RegistrationController {
         final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
+                    .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
         }
         final User user = accountService.getUserById(userId);
         if (user == null) {
             return ResponseEntity
-                    .ok(new ErrorResponse(HttpStatus.NO_CONTENT.toString(), ErrorResponse.USER_NOT_EXIST));
+                    .ok(new ResponseBody(ErrorMsg.USER_NOT_EXIST));
         }
         return ResponseEntity.ok(user);
     }
 
     @RequestMapping(path = "/api/user", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@RequestBody @Valid UserDataRequest body, HttpSession session) {
+    public ResponseEntity<ResponseBody> updateUser(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
+                    .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
         }
         final User newUserData = new User(body.getLogin(), body.getPassword());
 
         newUserData.setId(selfId);
         accountService.updateUser(newUserData);
 
-        return ResponseEntity.ok(new SuccessResponse(selfId));
+        return ResponseEntity.ok(new ResponseBody(selfId));
     }
 
     @RequestMapping(path = "/api/user", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteUser(HttpSession session) {
+    public ResponseEntity<ResponseBody> deleteUser(HttpSession session) {
         final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), ErrorResponse.NOT_LOGGED_IN_MSG));
+                    .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
         }
 
         accountService.deleteUser(selfId);
         session.removeAttribute(USER_ID);
 
-        return ResponseEntity.ok(new SuccessResponse(selfId));
+        return ResponseEntity.ok(new ResponseBody(selfId));
     }
 
     private static final class UserDataRequest {
+
         @NotNull
         private String login;
         @NotNull
@@ -159,15 +144,26 @@ public class RegistrationController {
         }
     }
 
-    private static final class SuccessResponse {
+    private static final class ResponseBody {
+        @JsonInclude(JsonInclude.Include.NON_DEFAULT)
         private long id;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String msg;
 
-        private SuccessResponse(long id) {
+        private ResponseBody(long id) {
             this.id = id;
+        }
+
+        private ResponseBody(String msg) {
+            this.msg = msg;
         }
 
         public long getId() {
             return id;
+        }
+
+        public String getMsg() {
+            return msg;
         }
     }
 }

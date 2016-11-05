@@ -23,25 +23,24 @@ public class ExceptionHandlerAdvice {
             MissingServletRequestParameterException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorResponse handleValidationException(Exception e) {
+    public ErrorMsg handleValidationException(Exception e) {
         Application.logger.warn(e);
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), ErrorResponse.VALIDATION_ERROR_MSG);
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseBody
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleGlobalException(Exception e) {
-        Application.logger.warn(e);
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), ErrorResponse.SERVER_ERROR_MSG);
+        return new ErrorMsg(ErrorMsg.VALIDATION_ERROR_MSG);
     }
 
     @ExceptionHandler({NoHandlerFoundException.class, HttpRequestMethodNotSupportedException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ErrorResponse handle404() {
-        return new ErrorResponse(HttpStatus.NOT_FOUND.toString(), ErrorResponse.NOT_FOUND_MSG);
+    public ErrorMsg handle404() {
+        return new ErrorMsg(ErrorMsg.NOT_FOUND_MSG);
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMsg handleGlobalException(Exception e) {
+        Application.logger.warn(e);
+        return new ErrorMsg(ErrorMsg.SERVER_ERROR_MSG);
+    }
 
 }

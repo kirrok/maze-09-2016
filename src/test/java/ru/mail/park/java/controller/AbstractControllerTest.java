@@ -13,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
 @Transactional
-
 public abstract class AbstractControllerTest {
-
 	@Autowired
 	protected MockMvc mockMvc;
 }

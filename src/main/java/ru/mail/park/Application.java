@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * Created by Solovyev on 06/09/16.
+ * Created by kirrok on 06/09/16.
  */
 @SpringBootApplication
 public class Application {

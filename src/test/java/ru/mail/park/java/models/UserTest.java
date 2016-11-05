@@ -21,7 +21,7 @@ public class UserTest {
 
     public static final int MAX_SCORE = 121;
     public static final int ID = 96;
-    public static final String PASSWORD= "somePassword";
+    public static final String PASSWORD = "somePassword";
     public static final String LOGIN = "someLogin";
 
 
