@@ -35,7 +35,6 @@ public class RegistrationController extends AbstractAccountController {
     public ResponseEntity<ResponseBody> registration(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String login = body.getLogin();
         final String password = body.getPassword();
-
         User user = accountService.getUserByLogin(login);
 
         if (user != null) {
@@ -43,8 +42,8 @@ public class RegistrationController extends AbstractAccountController {
                     .body(new ResponseBody(ErrorMsg.USER_ALREADY_EXISTS_MSG));
         }
         user = new User(login, password);
-
         final Long id = accountService.addUser(user);
+
         if (id == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseBody(ErrorMsg.SERVER_ERROR_MSG));

@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import ru.mail.park.Application;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * Created by viacheslav on 03.10.16.

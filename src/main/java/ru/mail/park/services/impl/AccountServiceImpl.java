@@ -8,7 +8,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.mail.park.Application;
 import ru.mail.park.models.User;
 import ru.mail.park.repositories.UserDAO;
 import ru.mail.park.services.AccountService;
@@ -34,7 +33,6 @@ public class AccountServiceImpl implements AccountService {
         try {
             return userDao.addUser(user.getLogin(), user.getPassword());
         } catch (DataAccessException e) {
-            logger.info(e);
             return null;
         }
     }
