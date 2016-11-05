@@ -10,7 +10,7 @@
 
    ### TRAVIS
    [https://travis-ci.org/Brain404/maze-09-2016/](https://travis-ci.org/Brain404/maze-09-2016)
-   
+
    Участники проекта: [
    
                        Слепенков Вячеслав,
