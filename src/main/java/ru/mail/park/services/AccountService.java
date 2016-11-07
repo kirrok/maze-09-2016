@@ -1,6 +1,5 @@
 package ru.mail.park.services;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.mail.park.models.User;
 
 import java.util.List;
@@ -23,4 +22,5 @@ public interface AccountService {
 
     List<Map<String, Object>> score(String limit);
 
+    boolean passwordIsCorrect(User user, String password);
 }

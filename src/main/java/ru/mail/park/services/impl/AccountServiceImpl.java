@@ -19,16 +19,15 @@ import java.util.Map;
 @Service
 @Transactional
 public class AccountServiceImpl implements AccountService {
-    @Autowired
     UserDAO userDao;
-    @Autowired
     PasswordEncoder passwordEncoder;
 
     private static final Logger logger = LogManager.getLogger("main");
 
     @Autowired
-    public AccountServiceImpl(UserDAO userDao) {
+    public AccountServiceImpl(UserDAO userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Nullable
@@ -76,6 +75,11 @@ public class AccountServiceImpl implements AccountService {
     public void updateUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.updateUser(user);
+    }
+
+    @Override
+    public boolean passwordIsCorrect(User user, String password) {
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     @Nullable

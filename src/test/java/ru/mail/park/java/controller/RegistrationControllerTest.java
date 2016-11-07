@@ -50,7 +50,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
     public void testLogin() throws Exception {
         final User user = new User(LOGIN, PASSWORD);
 
-        final AccountService accountService = new AccountServiceImpl(userDAO);
+        final AccountService accountService = new AccountServiceImpl(userDAO, passwordEncoder);
         final long id = accountService.addUser(user);
 
         final MockHttpSession mockHttpSession = new MockHttpSession();
@@ -97,7 +97,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
     public void testGetUser() throws Exception {
         final User user = new User(LOGIN, PASSWORD);
 
-        final AccountService accountService = new AccountServiceImpl(userDAO);
+        final AccountService accountService = new AccountServiceImpl(userDAO, passwordEncoder);
         final long id = accountService.addUser(user);
 
         mockMvc.perform(get("/api/user/" + id)
@@ -111,9 +111,9 @@ public class RegistrationControllerTest extends AbstractControllerTest {
 
     @Test
     public void testUpdateUser() throws Exception {
-        final User user = new User(LOGIN, PASSWORD);
+        final User user = new User(LOGIN, passwordEncoder.encode(PASSWORD));
 
-        final AccountService accountService = new AccountServiceImpl(userDAO);
+        final AccountService accountService = new AccountServiceImpl(userDAO, passwordEncoder);
         final long id = accountService.addUser(user);
 
 
@@ -133,7 +133,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
     public void testDeleteUser() throws Exception {
         final User user = new User(LOGIN, PASSWORD);
 
-        final AccountService accountService = new AccountServiceImpl(userDAO);
+        final AccountService accountService = new AccountServiceImpl(userDAO, passwordEncoder);
         final long id = accountService.addUser(user);
 
         mockMvc.perform(delete("/api/user")
@@ -142,6 +142,5 @@ public class RegistrationControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("id").value(id));
 
         assertThat(accountService.getUserById(id)).isNull();
-
     }
 }

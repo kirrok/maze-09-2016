@@ -1,10 +1,8 @@
 package ru.mail.park.main;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.mail.park.exceptions.ErrorMsg;
 import ru.mail.park.models.User;
@@ -23,10 +21,6 @@ import static org.springframework.http.ResponseEntity.ok;
 public class RegistrationController extends AbstractAccountController {
     private final String USER_ID = "id";
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-
     @RequestMapping(path = "/api/session", method = RequestMethod.GET)
     public ResponseEntity<ResponseBody> sessionCheck(HttpSession session) {
         final Long selfId = (Long)session.getAttribute(USER_ID);
@@ -41,7 +35,6 @@ public class RegistrationController extends AbstractAccountController {
     public ResponseEntity<ResponseBody> registration(@RequestBody @Valid UserDataRequest body, HttpSession session) {
         final String login = body.getLogin();
         final String password = body.getPassword();
-        System.out.println(passwordEncoder);
         User user = accountService.getUserByLogin(login);
 
         if (user != null) {
@@ -66,7 +59,7 @@ public class RegistrationController extends AbstractAccountController {
 
         final User user = accountService.getUserByLogin(login);
 
-        if (user == null || !user.getPassword().equals(body.getPassword())) { // тут нужна другая проверка пароля
+        if (user == null || !accountService.passwordIsCorrect(user, body.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseBody(ErrorMsg.AUTHORIZATION_ERROR_MSG));
         }
@@ -87,7 +80,7 @@ public class RegistrationController extends AbstractAccountController {
     }
 
     @RequestMapping(path = "/api/user/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@PathVariable("id") long userId, HttpSession session) {
+    public ResponseEntity<?> getUser(@PathVariable(USER_ID) long userId, HttpSession session) {
         final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -132,7 +125,6 @@ public class RegistrationController extends AbstractAccountController {
     }
 
     private static final class UserDataRequest {
-
         @NotNull
         private String login;
         @NotNull
