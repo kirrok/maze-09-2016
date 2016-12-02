@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserTest {
 
     public static final int MAX_SCORE = 121;
-    public static final Id<User> ID = 96;
+    public static final Id<User> ID = Id.of(96);
     public static final String PASSWORD = "somePassword";
     public static final String LOGIN = "someLogin";
 

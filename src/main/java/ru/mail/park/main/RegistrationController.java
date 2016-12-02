@@ -1,6 +1,8 @@
 package ru.mail.park.main;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,13 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 public class RegistrationController extends AbstractAccountController {
+    private static final Logger LOGGER = LogManager.getLogger(RegistrationController.class);
     private final String USER_ID = "id";
+
+    @RequestMapping(path = "/api/guest", method = RequestMethod.POST)
+    public ResponseEntity guest() {
+        return ok(new ResponseBody("testLogin"));
+    }
 
     @RequestMapping(path = "/api/session", method = RequestMethod.GET)
     public ResponseEntity<ResponseBody> sessionCheck(HttpSession session) {
@@ -105,7 +113,7 @@ public class RegistrationController extends AbstractAccountController {
 
         final User newUserData = new User(body.getLogin(), body.getPassword());
 
-        newUserData.setId(new Id<User>(selfId));
+        newUserData.setId(Id.of(selfId));
         accountService.updateUser(newUserData);
 
         return ResponseEntity.ok(new ResponseBody(selfId));

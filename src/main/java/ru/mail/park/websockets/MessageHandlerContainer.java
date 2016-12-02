@@ -33,7 +33,7 @@ public class MessageHandlerContainer {
         LOGGER.debug("message handled: type =[" + message.getType() + "], content=[" + message.getContent() + ']');
     }
 
-    public <T> void registerHandelr(Class<T> handlerType, MessageHandler<T> handler) {
-        handlers.put(handlerType, handler);
+    public <T> void registerHandler(Class<T> messageType, MessageHandler<T> handlerType) {
+        handlers.put(messageType, handlerType);
     }
 }

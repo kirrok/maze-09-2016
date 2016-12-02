@@ -1,5 +1,7 @@
 package ru.mail.park;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.WebSocketBehavior;
 import org.eclipse.jetty.websocket.api.WebSocketPolicy;
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
@@ -25,11 +27,12 @@ import java.util.concurrent.TimeUnit;
 @SpringBootApplication
 public class Application {
 
+    private static final Logger LOGGER = LogManager.getLogger(Application.class);
     public static final long IDLE_TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1);
     public static final int BUFFER_SIZE_BYTES = 8192;
 
     public static void main(String[] args) {
-        SpringApplication.run(new Object[]{WebSocketConfig.class, Application.class}, args);
+        SpringApplication.run(new Object[]{Application.class, WebSocketConfig.class}, args);
     }
 
     @Bean
@@ -59,6 +62,7 @@ public class Application {
 
     @Bean
     public WebSocketHandler gameWebSocketHandler() {
+        LOGGER.info("OWN: ->>" +" Construct WebSocketHandler (perConnection) " + "<<-");
         return new PerConnectionWebSocketHandler(GameSocketHandler.class);
     }
 }

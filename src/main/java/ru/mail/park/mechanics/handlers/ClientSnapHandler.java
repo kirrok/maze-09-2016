@@ -13,7 +13,8 @@ import javax.annotation.PostConstruct;
 /**
  * Created by kirrok on 26.11.16.
  */
-@Component
+
+//@Component
 public class ClientSnapHandler extends MessageHandler<ClientSnap> {
     private MessageHandlerContainer messageHandlerContainer;
 
