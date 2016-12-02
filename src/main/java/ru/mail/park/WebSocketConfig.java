@@ -1,12 +1,11 @@
 package ru.mail.park;
 
-import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
-import ru.mail.park.websockets.GameSocketHandler;
 
 /**
  * Created by kirrok on 25.11.16.

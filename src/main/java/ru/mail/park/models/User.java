@@ -14,7 +14,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private int maxScore;
-    private long id;
+    private Id<User> id;
 
     public User(String login, String password) {
         this.login = login;
@@ -40,7 +40,7 @@ public class User {
         return password;
     }
 
-    public void setId(long id) {
+    public void setId(Id<User> id) {
         this.id = id;
     }
 
@@ -48,7 +48,7 @@ public class User {
         this.password = password;
     }
 
-    public long getId() {
+    public Id<User> getId() {
         return id;
     }
 
@@ -73,7 +73,7 @@ public class User {
     public int hashCode() {
         int result = login != null ? login.hashCode() : 0;
         result = 31 * result + maxScore;
-        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (id.getId() ^ (id.getId() >>> 32));
         return result;
     }
 }

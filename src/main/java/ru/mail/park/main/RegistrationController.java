@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mail.park.exceptions.ErrorMsg;
+import ru.mail.park.models.Id;
 import ru.mail.park.models.User;
 
 import javax.servlet.http.HttpSession;
@@ -23,7 +24,7 @@ public class RegistrationController extends AbstractAccountController {
 
     @RequestMapping(path = "/api/session", method = RequestMethod.GET)
     public ResponseEntity<ResponseBody> sessionCheck(HttpSession session) {
-        final Long selfId = (Long)session.getAttribute(USER_ID);
+        final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
@@ -42,7 +43,7 @@ public class RegistrationController extends AbstractAccountController {
                     .body(new ResponseBody(ErrorMsg.USER_ALREADY_EXISTS_MSG));
         }
         user = new User(login, password);
-        final Long id = accountService.addUser(user);
+        final Id<User> id = accountService.addUser(user);
 
         if (id == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -50,7 +51,7 @@ public class RegistrationController extends AbstractAccountController {
         }
         session.setAttribute(USER_ID, id);
 
-        return ok(new ResponseBody(id));
+        return ok(new ResponseBody(id.getId()));
     }
 
     @RequestMapping(path = "/api/auth", method = RequestMethod.POST)
@@ -65,7 +66,7 @@ public class RegistrationController extends AbstractAccountController {
         }
         session.setAttribute(USER_ID, user.getId());
 
-        return ok(new ResponseBody(user.getId()));
+        return ok(new ResponseBody(user.getId().getId()));
     }
 
     @RequestMapping(path = "/api/logout", method = RequestMethod.DELETE)
@@ -80,7 +81,7 @@ public class RegistrationController extends AbstractAccountController {
     }
 
     @RequestMapping(path = "/api/user/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@PathVariable(USER_ID) long userId, HttpSession session) {
+    public ResponseEntity<?> getUser(@PathVariable(USER_ID) Id<User> userId, HttpSession session) {
         final Long selfId = (Long) session.getAttribute(USER_ID);
         if (selfId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -102,9 +103,9 @@ public class RegistrationController extends AbstractAccountController {
                     .body(new ResponseBody(ErrorMsg.NOT_LOGGED_IN_MSG));
         }
 
-        final User newUserData = new User(body.getLogin(),body.getPassword());
+        final User newUserData = new User(body.getLogin(), body.getPassword());
 
-        newUserData.setId(selfId);
+        newUserData.setId(new Id<User>(selfId));
         accountService.updateUser(newUserData);
 
         return ResponseEntity.ok(new ResponseBody(selfId));

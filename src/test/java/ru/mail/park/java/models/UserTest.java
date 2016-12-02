@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.mail.park.models.Id;
 import ru.mail.park.models.User;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserTest {
 
     public static final int MAX_SCORE = 121;
-    public static final int ID = 96;
+    public static final Id<User> ID = 96;
     public static final String PASSWORD = "somePassword";
     public static final String LOGIN = "someLogin";
 

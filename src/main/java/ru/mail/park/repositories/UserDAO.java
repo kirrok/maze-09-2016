@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.mail.park.models.Id;
 import ru.mail.park.models.User;
 
 import java.sql.PreparedStatement;
@@ -31,7 +32,7 @@ public class UserDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long addUser(String login, String password) {
+    public Id<User> addUser(String login, String password) {
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(
@@ -42,7 +43,7 @@ public class UserDAO {
                     return ps;
                 },
                 keyHolder);
-        return keyHolder.getKey().longValue();
+        return new Id<>(keyHolder.getKey().longValue());
     }
 
     public void deleteUser(long id) {
@@ -53,7 +54,7 @@ public class UserDAO {
         final User tmpUser =
                 new User(rs.getString("login"), rs.getString("password"));
         tmpUser.setMaxScore(rs.getInt("max_score"));
-        tmpUser.setId(rs.getLong("id"));
+        tmpUser.setId(new Id<>(rs.getLong("id")));
         return tmpUser;
     };
 
@@ -61,12 +62,12 @@ public class UserDAO {
         return jdbcTemplate.queryForObject(GET_USER_BY_LOGIN, ROW_MAPPER, login);
     }
 
-    public User getUserById(long userId) {
+    public User getUserById(Id<User> userId) {
         return jdbcTemplate.queryForObject(GET_USER_BY_ID, ROW_MAPPER, userId);
     }
 
     public void updateUser(User user) {
-        jdbcTemplate.update(UPDATE_USER, user.getPassword(), user.getLogin(), user.getId());
+        jdbcTemplate.update(UPDATE_USER, user.getPassword(), user.getLogin(), user.getId().getId());
     }
 
     public List<Map<String, Object>> getUsersScore(String limit) {

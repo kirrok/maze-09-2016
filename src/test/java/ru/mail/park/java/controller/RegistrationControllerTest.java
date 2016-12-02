@@ -6,10 +6,11 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
+import ru.mail.park.models.Id;
 import ru.mail.park.models.User;
 import ru.mail.park.repositories.UserDAO;
 import ru.mail.park.services.AccountService;
-import ru.mail.park.services.impl.AccountServiceImpl;
+import ru.mail.park.services.AccountServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -51,7 +52,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
         final User user = new User(LOGIN, PASSWORD);
 
         final AccountService accountService = new AccountServiceImpl(userDAO, passwordEncoder);
-        final long id = accountService.addUser(user);
+        final Id<User> id = accountService.addUser(user);
 
         final MockHttpSession mockHttpSession = new MockHttpSession();
         mockMvc.perform(post("/api/auth")
@@ -98,7 +99,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
         final User user = new User(LOGIN, PASSWORD);
 
         final AccountService accountService = new AccountServiceImpl(userDAO, passwordEncoder);
-        final long id = accountService.addUser(user);
+        final Id<User> id = accountService.addUser(user);
 
         mockMvc.perform(get("/api/user/" + id)
                 .sessionAttr("id", ID))
@@ -114,7 +115,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
         final User user = new User(LOGIN, passwordEncoder.encode(PASSWORD));
 
         final AccountService accountService = new AccountServiceImpl(userDAO, passwordEncoder);
-        final long id = accountService.addUser(user);
+        final Id<User> id = accountService.addUser(user);
 
 
         mockMvc.perform(put("/api/user")
@@ -134,7 +135,7 @@ public class RegistrationControllerTest extends AbstractControllerTest {
         final User user = new User(LOGIN, PASSWORD);
 
         final AccountService accountService = new AccountServiceImpl(userDAO, passwordEncoder);
-        final long id = accountService.addUser(user);
+        final Id<User> id = accountService.addUser(user);
 
         mockMvc.perform(delete("/api/user")
                 .sessionAttr("id", id))

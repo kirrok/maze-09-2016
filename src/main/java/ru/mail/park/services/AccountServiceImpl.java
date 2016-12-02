@@ -1,4 +1,4 @@
-package ru.mail.park.services.impl;
+package ru.mail.park.services;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -9,6 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.mail.park.models.Id;
 import ru.mail.park.models.User;
 import ru.mail.park.repositories.UserDAO;
 import ru.mail.park.services.AccountService;
@@ -22,7 +23,7 @@ public class AccountServiceImpl implements AccountService {
     UserDAO userDao;
     PasswordEncoder passwordEncoder;
 
-    private static final Logger logger = LogManager.getLogger("main");
+    private static final Logger LOGGER = LogManager.getLogger("main");
 
     @Autowired
     public AccountServiceImpl(UserDAO userDao, PasswordEncoder passwordEncoder) {
@@ -32,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Nullable
     @Override
-    public Long addUser(User user) {
+    public Id<User> addUser(User user) {
         try {
             return userDao.addUser(user.getLogin(), passwordEncoder.encode(user.getPassword()));
         } catch (DataAccessException e) {
@@ -45,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             userDao.deleteUser(userId);
         } catch (DataAccessException e) {
-            logger.info(e);
+            LOGGER.info(e);
         }
     }
 
@@ -55,18 +56,18 @@ public class AccountServiceImpl implements AccountService {
         try {
             return userDao.getUserByLogin(login);
         } catch (EmptyResultDataAccessException e) {
-            logger.info(e);
+            LOGGER.info(e);
             return null;
         }
     }
 
     @Nullable
     @Override
-    public User getUserById(long id) {
+    public User getUserById(Id<User> id) {
         try {
             return userDao.getUserById(id);
         } catch (EmptyResultDataAccessException e) {
-            logger.info(e);
+            LOGGER.info(e);
             return null;
         }
     }
@@ -88,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             return userDao.getUsersScore(limit);
         } catch (DataAccessException e) {
-            logger.info(e);
+            LOGGER.info(e);
             return null;
         }
 
