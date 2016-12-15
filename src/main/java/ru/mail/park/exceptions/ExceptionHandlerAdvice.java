@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.naming.AuthenticationException;
+
 /**
  * Created by viacheslav on 03.10.16.
  */
@@ -20,14 +22,14 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    private static final Logger logger = LogManager.getLogger("main");
+    private static final Logger LOGGER = LogManager.getLogger("main");
 
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class,
             MissingServletRequestParameterException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorMsg handleValidationException(Exception e) {
-        logger.error("ПРИШЛИ ПЛОХИЕ ДАННЫЕ.", e);
+        LOGGER.error("ПРИШЛИ ПЛОХИЕ ДАННЫЕ.", e);
         return new ErrorMsg(ErrorMsg.VALIDATION_ERROR_MSG);
     }
 
@@ -35,7 +37,7 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorMsg handle404(Exception e) {
-        logger.warn(e);
+        LOGGER.warn(e);
         return new ErrorMsg(ErrorMsg.NOT_FOUND_MSG);
     }
 
@@ -43,8 +45,11 @@ public class ExceptionHandlerAdvice {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleGlobalException(Exception e) {
-        logger.error("ЧТО ТО ПОШЛО НЕ ТАК.", e);
+        LOGGER.error("ЧТО ТО ПОШЛО НЕ ТАК.", e);
         return new ErrorMsg(ErrorMsg.SERVER_ERROR_MSG);
     }
-
+    @ExceptionHandler(AuthenticationException.class)
+    public void handleAuthenticationException(AuthenticationException e) {
+        LOGGER.warn(e);
+    }
 }

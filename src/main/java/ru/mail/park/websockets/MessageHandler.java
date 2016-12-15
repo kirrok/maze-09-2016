@@ -1,6 +1,9 @@
 package ru.mail.park.websockets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import ru.mail.park.Application;
 import ru.mail.park.models.Id;
 import ru.mail.park.models.User;
 
@@ -11,6 +14,7 @@ import java.io.IOException;
  */
 public abstract class MessageHandler<T> {
 
+    private static final Logger LOGGER = LogManager.getLogger(MessageHandler.class);
     private final Class<T> clazz;
 
     public MessageHandler(Class<T> clazz) {
@@ -18,6 +22,8 @@ public abstract class MessageHandler<T> {
     }
 
     public void handle(Message message, Id<User> forUser) throws HandleException {
+        LOGGER.info("abstract message handler HANDLE");
+
         try {
             final Object data = new ObjectMapper().readValue(message.getType(), clazz);
             handle(clazz.cast(data), forUser);

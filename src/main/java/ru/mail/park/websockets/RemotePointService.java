@@ -2,6 +2,8 @@ package ru.mail.park.websockets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -22,12 +24,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class RemotePointService {
-
+    private static final Logger LOGGER = LogManager.getLogger(RemotePointService.class);
     private Map<Id<User>, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public void registerUser(@NotNull Id<User> userId, @NotNull WebSocketSession webSocketSession) {
+        LOGGER.info("registerUser1");
+
         sessions.put(userId, webSocketSession);
+        LOGGER.info("registerUser2");
     }
 
     public boolean isConnected(@NotNull Id<User> userId) {

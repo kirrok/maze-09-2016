@@ -3,9 +3,7 @@ package ru.mail.park.websockets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import ru.mail.park.models.Id;
 import ru.mail.park.models.User;
@@ -16,11 +14,10 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
- *
  * Created by kirrok on 25.11.16.
  */
 
-public class GameSocketHandler extends TextWebSocketHandler{
+public class GameSocketHandler extends TextWebSocketHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GameSocketHandler.class);
 
@@ -37,11 +34,11 @@ public class GameSocketHandler extends TextWebSocketHandler{
         this.accountService = accountService;
         this.messageHandlerContainer = messageHandlerContainer;
         this.remotePointService = remotePointService;
-        LOGGER.info("CONSTRUCT!");
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws AuthenticationException {
+        LOGGER.info("handleTextMessage");
         final Long userId = (Long) session.getAttributes().get("userId");
         final User user;
         if (userId == null || (user = accountService.getUserById(Id.of(userId))) == null) {
@@ -51,7 +48,7 @@ public class GameSocketHandler extends TextWebSocketHandler{
     }
 
     private void handleMessage(User userProfile, TextMessage text) {
-
+        LOGGER.info("handleMessage");
         final Message message;
         try {
             message = objectMapper.readValue(text.getPayload(), Message.class);
@@ -68,11 +65,17 @@ public class GameSocketHandler extends TextWebSocketHandler{
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws AuthenticationException{
-        LOGGER.info("Connection established!");
-        System.out.println("DWW");
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        LOGGER.error("Transport error: ", exception);
+    }
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws AuthenticationException {
+        LOGGER.info("Connection established, session : {}", session.getId());
         final Long id = (Long) session.getAttributes().get("userId");
+
         if (id == null || accountService.getUserById(Id.of(id)) == null) {
+            LOGGER.warn("throwing exception !");
             throw new AuthenticationException("Only authenticated users allowed to play a game");
         }
         final Id<User> userId = Id.of(id);

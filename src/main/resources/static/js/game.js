@@ -317,7 +317,9 @@ Game.onServerSnapArrived = function (snapRaw) {
 };
 
 Game.tryStartGame = function () {
+    Console.log("Send JoinGameMsg");
     Messaging.sendJoinGameMsg();
+    Console.log("Send JoinGameMsg OK");
 };
 
 Game.onGameStarted = function (initMessage) {
@@ -366,6 +368,7 @@ Game.connect = (function () {
         var response = {};
         var message = JSON.parse(event.data);
 
+        Console.log("message received: " + event);
 
         if (message.type === "ru.mail.park.pinger.requests.PingData$Request") {
             content = JSON.parse(message.content);

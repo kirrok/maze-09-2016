@@ -14,10 +14,13 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.handler.ExceptionWebSocketHandlerDecorator;
 import org.springframework.web.socket.handler.PerConnectionWebSocketHandler;
+import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import ru.mail.park.websockets.GameSocketHandler;
+import ru.mail.park.websockets.gameExceptionWebSocketHandlerDecorator;
 
 import java.util.concurrent.TimeUnit;
 
@@ -62,7 +65,7 @@ public class Application {
 
     @Bean
     public WebSocketHandler gameWebSocketHandler() {
-        LOGGER.info("OWN: ->>" +" Construct WebSocketHandler (perConnection) " + "<<-");
-        return new PerConnectionWebSocketHandler(GameSocketHandler.class);
+        return new gameExceptionWebSocketHandlerDecorator(new PerConnectionWebSocketHandler(GameSocketHandler.class));
     }
+
 }

@@ -2,6 +2,7 @@ package ru.mail.park.websockets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import ru.mail.park.models.Id;
 import ru.mail.park.models.User;
 
@@ -11,6 +12,7 @@ import java.util.Map;
 /**
  * Created by kirrok on 26.11.16.
  */
+@Service
 public class MessageHandlerContainer {
 
     private Map<Class<?>, MessageHandler<?>> handlers = new HashMap<>();
